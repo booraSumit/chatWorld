@@ -5,6 +5,9 @@ const msgInputField = document.querySelector("#send");
 const userTyping = document.querySelector(".user__typing");
 const onlineContainer = document.querySelector(".online-container");
 const popUp = document.querySelector(".popup");
+alert(
+  "this is a public chat server.anyone can join this server.please do not use abuses words and don't share your personal information here.this is a practice project but we will try to update this. if you want to suggest some features we will consider that too"
+);
 
 let userName = prompt("please enter your name");
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>chat world</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://kit.fontawesome.com/8166b7fca8.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="style/normalize.css" />
+    <link rel="stylesheet" href="style/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="chat-container">
+        <header class="chat__header">
+          <i class="fas fa-comments logo"></i>
+          <div>
+            <h1 class="header__heading">Chat world</h1>
+            <span class="heading__tagline">A public chat server</span>
+          </div>
+        </header>
+        <i class="fas fa-bars"></i>
+        <div class="chat__body">
+          <div class="msg-section">
+            <div class="msg-container">
+              <p class="user__typing"></p>
+            </div>
+            <div class="msg-sender">
+              <textarea
+                id="send"
+                rows="1"
+                placeholder="type a message..."
+              ></textarea>
+              <i class="fas fa-paper-plane send-btn"></i>
+            </div>
+          </div>
+
+          <div class="online-section">
+            <h2 class="online__heading"><span class="dot"></span> online</h2>
+            <div class="online-container"></div>
+            <button class="customize">
+              Dark Mode
+              <i class="fas fa-moon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script defer src="/socket.io/socket.io.js"></script>
+    <script defer src="js/client.js"></script>
+    <script defer src="js/app.js"></script>
+  </body>
+</html>

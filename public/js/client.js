@@ -1,4 +1,4 @@
-const socket = io("http://localhost:3000/");
+const socket = io("https://chat--world.herokuapp.com/");
 const msgContainer = document.querySelector(".msg-container");
 const sendBtn = document.querySelector(".send-btn");
 const msgInputField = document.querySelector("#send");

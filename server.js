@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 const users = [];
 
+//server static file
 app.use(express.static(__dirname + "/public"));
 
 app.get("/", (req, res) => {
@@ -20,7 +21,9 @@ io.on("connection", (socket) => {
     const alreadyUser = users.find((item) => user == item.user);
     if (!alreadyUser) {
       socket.broadcast.emit("userJoin", user);
+      socket.emit("welcome", user);
       users.push({ user, socketId });
+      //emit online for all users inculding sender
       io.emit("online", users);
     } else {
       socket.emit("userJoin", false);
@@ -44,6 +47,7 @@ io.on("connection", (socket) => {
   // disconnect  user
   socket.on("disconnect", () => {
     const userIndex = users.findIndex((item) => item.socketId == socketId);
+    io.emit("left", users[userIndex]);
     users.splice(userIndex, 1);
     io.emit("online", users);
   });

@@ -1,3 +1,12 @@
+// online slide toggler in mobile devices
+const menuBar = document.querySelector(".fa-bars");
+
+menuBar.addEventListener("click", (e) => {
+  document.querySelector(".online-section").classList.toggle("slide");
+});
+
+//theme toggler
+
 const themChanger = document.querySelector(".customize");
 
 themChanger.addEventListener("click", toggleTheme);

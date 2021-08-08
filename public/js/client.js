@@ -4,12 +4,13 @@ const sendBtn = document.querySelector(".send-btn");
 const msgInputField = document.querySelector("#send");
 const userTyping = document.querySelector(".user__typing");
 const onlineContainer = document.querySelector(".online-container");
+const popUp = document.querySelector(".popup");
 
-let userName = prompt("please enter you name");
+let userName = prompt("please enter your name");
 
 // validate username length
-if (userName.length > 12) {
-  userName = prompt("your name too long ");
+while (!userName) {
+  userName = prompt("please enter your name");
 }
 socket.emit("userJoin", userName);
 socket.on("userJoin", (user) => {
@@ -17,9 +18,31 @@ socket.on("userJoin", (user) => {
     renderUser(user);
   } else {
     userName = prompt("Name already taken Please enter different name");
+    while (!userName) {
+      userName = prompt("please enter your name");
+    }
+    if (userName.length > 12) {
+      userName = prompt("your name too long ");
+      while (!userName) {
+        userName = prompt("please enter your name");
+      }
+    }
+
     socket.emit("userJoin", userName);
   }
 });
+
+// welcome popup message
+socket.on("welcome", (user) => {
+  popUp.innerHTML = `Welcome ${user}`;
+  popUp.style.backgroundColor = "green";
+  popUp.className = "popup slide";
+  setTimeout(() => {
+    popUp.classList.remove("slide");
+  }, 2000);
+});
+
+// check for user typing section
 
 let timout = undefined;
 
@@ -31,10 +54,10 @@ function timeoutFunction() {
 msgInputField.addEventListener("input", (e) => {
   socket.emit("userTyping", userName);
   clearTimeout(timout);
-  timout = setTimeout(timeoutFunction, 100);
+  timout = setTimeout(timeoutFunction, 900);
 });
 
-//listing typin and not typing event
+//listen typing and not typing event
 socket.on("userTyping", (user) => {
   userTyping.innerHTML = `${user} typing...`;
   msgContainer.append(userTyping);
@@ -46,8 +69,10 @@ socket.on("notTyping", (user) => {
   msgContainer.scrollTop =
     msgContainer.scrollHeight - msgContainer.offsetHeight;
 });
+
 //send a message
 sendBtn.addEventListener("click", (e) => {
+  socket.emit("notTyping", false);
   const msg = msgInputField.value.trim();
 
   if (msg.length == 0) return false;
@@ -56,17 +81,39 @@ sendBtn.addEventListener("click", (e) => {
   msgInputField.value = "";
 });
 
-//receive message
+// send message with enter key
+msgInputField.addEventListener("keyup", (e) => {
+  if (e.keyCode === 13) {
+    socket.emit("notTyping", false);
+    const msg = msgInputField.value.trim();
+    if (msg.length == 0) return false;
+    socket.emit("msg", { userName, msg });
+    renderMsg({ userName, msg, type: "sender" });
+    msgInputField.value = "";
+  }
+});
+
+//receive message render on screen
 socket.on("msg", (user) => {
   renderMsg(user);
 });
 
-//online show
+//online users update
 socket.on("online", (user) => {
   renderOnline(user);
 });
 
-//show online function
+// user left popup to all users
+socket.on("left", (user) => {
+  popUp.innerHTML = `${user.user} left`;
+  popUp.style.backgroundColor = "red";
+  popUp.className = "popup slide";
+  setTimeout(() => {
+    popUp.classList.remove("slide");
+  }, 1500);
+});
+
+//function to show online users
 function renderOnline(user) {
   onlineContainer.innerHTML = "";
   user.forEach((item) => {
@@ -77,7 +124,7 @@ function renderOnline(user) {
   });
 }
 
-//renderUser when it connect
+//renderUser connected user on screen function
 function renderUser(user) {
   const userJoin = document.createElement("div");
   userJoin.className = "msg user__join";
@@ -87,7 +134,7 @@ function renderUser(user) {
     msgContainer.scrollHeight - msgContainer.offsetHeight;
 }
 
-//get time
+//get time function
 function getTime() {
   const d = new Date();
   const h = d.getHours();
@@ -100,10 +147,12 @@ function renderMsg(user) {
   const msg = document.createElement("div");
   msg.className = "msg";
   msg.innerHTML = `<p class="msg__text">${user.msg}</p>
-    <span class="user__name">${
-      user.type === "sender" ? "" : user.userName
-    }</span
-    ><span class="msg__time">${getTime()}</span>`;
+    <span class="user__name ${user.type === "receiver" ? "get" : ""} ">${
+    user.type === "sender" ? "" : user.userName
+  }</span
+    ><span class="msg__time ${
+      user.type === "receiver" ? "get" : ""
+    }">${getTime()}</span>`;
   if (user.type === "sender") msg.classList.add("sender");
   else msg.classList.add("receiver");
   msgContainer.append(msg);
